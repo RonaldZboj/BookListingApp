@@ -4,4 +4,11 @@
     <!-- Height of  list item -->
     <dimen name="list_item_height">100dp</dimen>
 
+    <!-- Dimens for list_item.xml -->
+
+    <dimen name="title_text_size">14sp</dimen>
+    <dimen name="author_text_size">12sp</dimen>
+    <dimen name="layout_padding">4dp</dimen>
+    <dimen name="author_padding">4dp</dimen>
+
 </resources>

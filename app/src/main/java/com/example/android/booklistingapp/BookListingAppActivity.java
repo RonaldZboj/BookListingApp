@@ -53,12 +53,8 @@ public class BookListingAppActivity extends AppCompatActivity implements LoaderM
         // Set the adapter on the ListView
         bookListView.setAdapter(mAdapter);
 
-        // Get a reference to the ConnectivityManager to check state of network connectivity
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
         // Check if device is connected to the internet
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (isConnected()) {
             // Initialize
             getLoaderManager().initLoader(0, null, this);
         } else {
@@ -76,13 +72,17 @@ public class BookListingAppActivity extends AppCompatActivity implements LoaderM
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (networkInfo != null && networkInfo.isConnected()) {
+                if (isConnected()) {
                     //Restart the loader, execute query
                     getLoaderManager().restartLoader(0, null, BookListingAppActivity.this);
                     return true;
                 } else {
                     // If no internet connection
                     emptyTextView.setText(R.string.no_internet_connection);
+                    // if there is any data in the Adapter, say if we performed a search, lost
+                    // connectivity, and tried to search again, then we need to clear out old data
+                    // so we can see the empty view
+                    mAdapter.clear();
                     return false;
                 }
             }
@@ -90,6 +90,12 @@ public class BookListingAppActivity extends AppCompatActivity implements LoaderM
 
     }
 
+    //We need this method outside onCreate, because we check internet connection when the search button is actually pressed
+    public boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
 
     @Override
     public Loader<List<Book>> onCreateLoader(int id, Bundle args) {

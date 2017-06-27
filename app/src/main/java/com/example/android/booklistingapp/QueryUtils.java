@@ -29,6 +29,12 @@ public final class QueryUtils {
      */
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
+    //Title KEY for parsing JSON
+    private static final String KEY_TITLE = "title";
+
+    //Authors KEY for parsing JSON
+    private static final String KEY_AUTHORS = "authors";
+
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
      * This class is only meant to hold static variables and methods, which can be accessed
@@ -168,8 +174,20 @@ public final class QueryUtils {
 
 
                 // Extract the value for the key called "title" and "author"
-                String title = volume.getString("title");
-                String author = volume.getJSONArray("authors").get(0).toString();
+                // but first according to review 1 I check if JSONObject has the required field (title and authors)
+                String title;
+                if (volume.has(KEY_TITLE)) {
+                    title = volume.getString(KEY_TITLE);
+                } else {
+                    title = "No title";
+                }
+
+                String author;
+                if (volume.has(KEY_AUTHORS)) {
+                    author = volume.getJSONArray(KEY_AUTHORS).get(0).toString();
+                } else {
+                    author = "Unknown author";
+                }
 
                 // Create a new Book object with the title and author
                 Book book = new Book(title, author);
